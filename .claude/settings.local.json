@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if [ -d ~/.claude ])",
+      "Bash(then ls -la ~/.claude)",
+      "Bash(else echo \"Directory doesn''t exist\")",
+      "Bash(fi)",
+      "Bash(npm install:*)",
+      "Bash(ccusage:*)",
+      "Bash(npx skills:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)"
+    ]
+  }
+}
