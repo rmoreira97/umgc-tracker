@@ -1,11 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const cn = (...classes) => classes.filter(Boolean).join(' ');
 
+// Change this to your desired password
+const SITE_PASSWORD = 'umgc2026';
+
 const CourseTracker = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [selectedWeek, setSelectedWeek] = useState(3);
   const [activeTab, setActiveTab] = useState('schedule');
   const [expandedCourse, setExpandedCourse] = useState(null);
+
+  // Check if already authenticated on mount
+  useEffect(() => {
+    const auth = localStorage.getItem('umgc-tracker-auth');
+    if (auth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (password === SITE_PASSWORD) {
+      setIsAuthenticated(true);
+      localStorage.setItem('umgc-tracker-auth', 'true');
+      setError('');
+    } else {
+      setError('Incorrect password');
+      setPassword('');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('umgc-tracker-auth');
+  };
+
+  // Login Screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-dvh bg-neutral-950 text-neutral-100 font-mono flex items-center justify-center">
+        <div className="max-w-xs w-full px-4">
+          <div className="text-center mb-8">
+            <h1 className="text-xs text-neutral-500 uppercase tracking-widest mb-1">UMGC Spring 2026</h1>
+            <p className="text-2xl font-bold tracking-tight">Course Tracker</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                className="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-neutral-600 placeholder-neutral-600"
+                autoFocus
+              />
+            </div>
+            {error && (
+              <p className="text-rose-400 text-xs text-center">{error}</p>
+            )}
+            <button
+              type="submit"
+              className="w-full bg-neutral-100 text-neutral-900 rounded-lg py-3 text-sm font-medium hover:bg-neutral-200 transition-colors"
+            >
+              Enter
+            </button>
+          </form>
+          <p className="text-[10px] text-neutral-700 text-center mt-6">
+            Private access only
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const courses = {
     'IFSM 304': {
@@ -186,9 +255,19 @@ const CourseTracker = () => {
 
         {/* Header */}
         <header className="mb-6">
-          <h1 className="text-xs text-neutral-500 uppercase tracking-widest mb-1">UMGC Spring 2026</h1>
-          <p className="text-2xl font-bold tracking-tight">Course Tracker</p>
-          <p className="text-xs text-neutral-600 mt-1">Updated: Jan 24, 2026</p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-xs text-neutral-500 uppercase tracking-widest mb-1">UMGC Spring 2026</h1>
+              <p className="text-2xl font-bold tracking-tight">Course Tracker</p>
+              <p className="text-xs text-neutral-600 mt-1">Updated: Jan 24, 2026</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="text-[10px] text-neutral-600 hover:text-neutral-400 transition-colors uppercase tracking-wider"
+            >
+              Logout
+            </button>
+          </div>
         </header>
 
         {/* Overall Grade Cards */}
