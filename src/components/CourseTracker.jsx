@@ -153,7 +153,7 @@ const CourseTracker = () => {
     return (
       <div className="min-h-dvh bg-[#0a0a0f] text-white font-sans flex items-center justify-center relative overflow-hidden">
         <AnimatedBackground />
-        <div className="max-w-sm w-full px-6 relative z-10">
+        <div className="max-w-sm lg:max-w-md w-full px-6 relative z-10">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -386,7 +386,7 @@ const CourseTracker = () => {
     <div className="min-h-dvh bg-[#0a0a0f] text-white font-sans relative">
       <AnimatedBackground />
 
-      <div className="max-w-lg mx-auto px-4 py-6 relative z-10">
+      <div className="max-w-lg lg:max-w-5xl xl:max-w-6xl mx-auto px-4 lg:px-8 py-6 relative z-10">
         {/* Header */}
         <header className="mb-8">
           <div className="flex items-start justify-between">
@@ -437,7 +437,7 @@ const CourseTracker = () => {
         {/* Week Selector */}
         <div className="mb-6">
           <p className="text-xs text-neutral-500 uppercase tracking-wider mb-3">Select Week</p>
-          <div className="flex gap-2">
+          <div className="flex gap-2 lg:gap-3">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((week) => {
               const isCurrent = week === 3;
               const isHeavy = [4, 5, 6].includes(week);
@@ -509,7 +509,7 @@ const CourseTracker = () => {
 
         {/* Schedule Tab */}
         {activeTab === 'schedule' && (
-          <div className="space-y-3">
+          <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
             {weeklySchedule[selectedWeek]?.assignments.length === 0 ? (
               <GlassCard className="p-8 text-center" hover={false}>
                 <p className="text-neutral-500">No assignments this week</p>
@@ -559,7 +559,7 @@ const CourseTracker = () => {
 
         {/* Grades Tab */}
         {activeTab === 'grades' && (
-          <div className="space-y-4">
+          <div className="space-y-4 lg:grid lg:grid-cols-3 lg:gap-4 lg:space-y-0">
             {Object.entries(courses).map(([code, courseInfo]) => (
               <GlassCard key={code} className="p-5" hover={false}>
                 <div className="flex items-center justify-between mb-4">
@@ -607,7 +607,7 @@ const CourseTracker = () => {
 
         {/* Courses Tab */}
         {activeTab === 'courses' && (
-          <div className="space-y-3">
+          <div className="space-y-3 lg:grid lg:grid-cols-3 lg:gap-4 lg:space-y-0">
             {Object.entries(courses).map(([code, info]) => {
               const isOpen = expandedCourse === code;
               return (
