@@ -122,14 +122,48 @@ const CourseTracker = () => {
   const [activeTab, setActiveTab] = useState('schedule');
   const [expandedCourse, setExpandedCourse] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [completedItems, setCompletedItems] = useState({});
+  const [startedItems, setStartedItems] = useState({});
+
+  // Current week for semester progress
+  const CURRENT_WEEK = 3;
+  const TOTAL_WEEKS = 8;
+  const semesterProgress = Math.round((CURRENT_WEEK / TOTAL_WEEKS) * 100);
 
   useEffect(() => {
     const auth = localStorage.getItem('umgc-tracker-auth');
     if (auth === 'true') {
       setIsAuthenticated(true);
     }
+    // Load completed/started items from localStorage
+    const savedCompleted = localStorage.getItem('umgc-tracker-completed');
+    const savedStarted = localStorage.getItem('umgc-tracker-started');
+    if (savedCompleted) setCompletedItems(JSON.parse(savedCompleted));
+    if (savedStarted) setStartedItems(JSON.parse(savedStarted));
     setTimeout(() => setIsLoading(false), 500);
   }, []);
+
+  // Toggle item completion
+  const toggleComplete = (itemKey) => {
+    const newCompleted = { ...completedItems, [itemKey]: !completedItems[itemKey] };
+    if (!completedItems[itemKey]) {
+      // If marking complete, also remove from started
+      const newStarted = { ...startedItems };
+      delete newStarted[itemKey];
+      setStartedItems(newStarted);
+      localStorage.setItem('umgc-tracker-started', JSON.stringify(newStarted));
+    }
+    setCompletedItems(newCompleted);
+    localStorage.setItem('umgc-tracker-completed', JSON.stringify(newCompleted));
+  };
+
+  // Toggle item started
+  const toggleStarted = (itemKey) => {
+    if (completedItems[itemKey]) return; // Can't start if already complete
+    const newStarted = { ...startedItems, [itemKey]: !startedItems[itemKey] };
+    setStartedItems(newStarted);
+    localStorage.setItem('umgc-tracker-started', JSON.stringify(newStarted));
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -412,6 +446,60 @@ const CourseTracker = () => {
           </div>
         </header>
 
+        {/* Semester Progress Bar */}
+        <GlassCard className="p-4 mb-4" hover={false}>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-neutral-500 uppercase tracking-wider">Semester Progress</p>
+            <p className="text-xs text-neutral-400">Week {CURRENT_WEEK} of {TOTAL_WEEKS}</p>
+          </div>
+          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-1000"
+              style={{ width: `${semesterProgress}%` }}
+            />
+          </div>
+          <div className="flex justify-between mt-2">
+            <p className="text-xs text-neutral-500">{semesterProgress}% complete</p>
+            <p className="text-xs text-neutral-500">{TOTAL_WEEKS - CURRENT_WEEK} weeks remaining</p>
+          </div>
+        </GlassCard>
+
+        {/* Due Soon Alert */}
+        {(() => {
+          // Get all upcoming assignments from current week
+          const dueSoonItems = weeklySchedule[CURRENT_WEEK]?.assignments.filter(
+            a => a.status === 'upcoming' && !completedItems[`${a.course}-${a.name}`]
+          ) || [];
+
+          if (dueSoonItems.length === 0) return null;
+
+          return (
+            <GlassCard className="p-4 mb-4 border-amber-500/30 bg-amber-500/5" hover={false}>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-amber-400">Due This Week</p>
+                  <div className="mt-2 space-y-1">
+                    {dueSoonItems.slice(0, 3).map((item, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <span className="text-xs text-amber-200/80">{item.name}</span>
+                        <span className="text-xs text-amber-400/60">{item.course} · {item.pts} pts</span>
+                      </div>
+                    ))}
+                    {dueSoonItems.length > 3 && (
+                      <p className="text-xs text-amber-400/50">+{dueSoonItems.length - 3} more</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </GlassCard>
+          );
+        })()}
+
         {/* Overall Progress */}
         <GlassCard className="p-5 mb-6" hover={false}>
           <div className="flex items-center justify-between">
@@ -529,39 +617,102 @@ const CourseTracker = () => {
                     <p className="text-sm text-neutral-500 text-center py-4">No assignments this week</p>
                   ) : (
                     <div className="space-y-3">
-                      {courseAssignments.map((item, i) => (
-                        <div
-                          key={i}
-                          className={cn(
-                            'p-3 rounded-xl bg-white/5 border border-white/5',
-                            item.status === 'due' && 'border-amber-500/30 bg-amber-500/5'
-                          )}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <p className="text-sm font-medium">{item.name}</p>
-                              <div className="flex items-center gap-2 mt-1">
-                                <span className="text-xs text-neutral-500">{item.pts} pts</span>
-                                {item.due && (
-                                  <>
-                                    <span className="text-neutral-600">·</span>
-                                    <span className="text-xs text-neutral-400">{item.due}</span>
-                                  </>
-                                )}
-                              </div>
-                              {item.note && (
-                                <p className="text-xs text-violet-400 mt-2 flex items-center gap-1">
-                                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                  </svg>
-                                  {item.note}
-                                </p>
+                      {courseAssignments.map((item, i) => {
+                        const itemKey = `${item.course}-${item.name}`;
+                        const isCompleted = completedItems[itemKey];
+                        const isStarted = startedItems[itemKey];
+                        const isActionable = item.status === 'upcoming' || item.status === 'due';
+
+                        return (
+                          <div
+                            key={i}
+                            className={cn(
+                              'p-3 rounded-xl bg-white/5 border border-white/5 transition-all',
+                              item.status === 'due' && 'border-amber-500/30 bg-amber-500/5',
+                              isCompleted && 'opacity-50 border-emerald-500/30 bg-emerald-500/5',
+                              isStarted && !isCompleted && 'border-blue-500/30 bg-blue-500/5'
+                            )}
+                          >
+                            <div className="flex items-start gap-3">
+                              {/* Checkbox area */}
+                              {isActionable && (
+                                <div className="flex flex-col gap-1 pt-0.5">
+                                  <button
+                                    onClick={() => toggleComplete(itemKey)}
+                                    className={cn(
+                                      'w-5 h-5 rounded border-2 flex items-center justify-center transition-all',
+                                      isCompleted
+                                        ? 'bg-emerald-500 border-emerald-500'
+                                        : 'border-white/20 hover:border-emerald-500/50'
+                                    )}
+                                    title={isCompleted ? 'Mark incomplete' : 'Mark complete'}
+                                  >
+                                    {isCompleted && (
+                                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                      </svg>
+                                    )}
+                                  </button>
+                                  {!isCompleted && (
+                                    <button
+                                      onClick={() => toggleStarted(itemKey)}
+                                      className={cn(
+                                        'w-5 h-5 rounded border-2 flex items-center justify-center transition-all',
+                                        isStarted
+                                          ? 'bg-blue-500 border-blue-500'
+                                          : 'border-white/20 hover:border-blue-500/50'
+                                      )}
+                                      title={isStarted ? 'Mark not started' : 'Mark as started'}
+                                    >
+                                      {isStarted && (
+                                        <div className="w-2 h-2 rounded-full bg-white" />
+                                      )}
+                                    </button>
+                                  )}
+                                </div>
                               )}
+
+                              <div className="flex-1">
+                                <div className="flex items-start justify-between gap-2">
+                                  <div>
+                                    <p className={cn('text-sm font-medium', isCompleted && 'line-through text-neutral-500')}>
+                                      {item.name}
+                                    </p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                      <span className="text-xs text-neutral-500">{item.pts} pts</span>
+                                      {item.due && (
+                                        <>
+                                          <span className="text-neutral-600">·</span>
+                                          <span className="text-xs text-neutral-400">{item.due}</span>
+                                        </>
+                                      )}
+                                    </div>
+                                    {item.note && (
+                                      <p className="text-xs text-violet-400 mt-2 flex items-center gap-1">
+                                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        {item.note}
+                                      </p>
+                                    )}
+                                  </div>
+                                  {isCompleted ? (
+                                    <span className="px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider rounded-full border bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                                      Done
+                                    </span>
+                                  ) : isStarted ? (
+                                    <span className="px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider rounded-full border bg-blue-500/20 text-blue-400 border-blue-500/30">
+                                      In Progress
+                                    </span>
+                                  ) : (
+                                    <StatusBadge status={item.status} score={item.score} />
+                                  )}
+                                </div>
+                              </div>
                             </div>
-                            <StatusBadge status={item.status} score={item.score} />
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </GlassCard>
