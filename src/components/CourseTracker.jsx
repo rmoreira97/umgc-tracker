@@ -509,51 +509,64 @@ const CourseTracker = () => {
 
         {/* Schedule Tab */}
         {activeTab === 'schedule' && (
-          <div className="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
-            {weeklySchedule[selectedWeek]?.assignments.length === 0 ? (
-              <GlassCard className="p-8 text-center" hover={false}>
-                <p className="text-neutral-500">No assignments this week</p>
-              </GlassCard>
-            ) : (
-              weeklySchedule[selectedWeek]?.assignments.map((item, i) => (
-                <GlassCard
-                  key={i}
-                  className={cn(
-                    'p-4',
-                    item.status === 'due' && 'border-amber-500/30 bg-amber-500/5'
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-3">
-                      <div className={cn('w-1 h-full min-h-[40px] rounded-full bg-gradient-to-b', courses[item.course].gradient)} />
-                      <div>
-                        <p className="font-medium">{item.name}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className={cn('text-xs', courses[item.course].color)}>{item.course}</span>
-                          <span className="text-neutral-600">·</span>
-                          <span className="text-xs text-neutral-500">{item.pts} pts</span>
-                          {item.due && (
-                            <>
-                              <span className="text-neutral-600">·</span>
-                              <span className="text-xs text-neutral-400">{item.due}</span>
-                            </>
-                          )}
-                        </div>
-                        {item.note && (
-                          <p className="text-xs text-violet-400 mt-2 flex items-center gap-1">
-                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            {item.note}
-                          </p>
-                        )}
-                      </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {Object.entries(courses).map(([code, courseInfo]) => {
+              const courseAssignments = weeklySchedule[selectedWeek]?.assignments.filter(a => a.course === code) || [];
+
+              return (
+                <GlassCard key={code} className="p-4" hover={false}>
+                  <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
+                    <div className={cn('w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center', courseInfo.gradient)}>
+                      <span className="text-sm font-bold text-white">{code.split(' ')[1]}</span>
                     </div>
-                    <StatusBadge status={item.status} score={item.score} />
+                    <div>
+                      <p className="font-medium">{code}</p>
+                      <p className="text-xs text-neutral-500">{courseInfo.name}</p>
+                    </div>
                   </div>
+
+                  {courseAssignments.length === 0 ? (
+                    <p className="text-sm text-neutral-500 text-center py-4">No assignments this week</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {courseAssignments.map((item, i) => (
+                        <div
+                          key={i}
+                          className={cn(
+                            'p-3 rounded-xl bg-white/5 border border-white/5',
+                            item.status === 'due' && 'border-amber-500/30 bg-amber-500/5'
+                          )}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <p className="text-sm font-medium">{item.name}</p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs text-neutral-500">{item.pts} pts</span>
+                                {item.due && (
+                                  <>
+                                    <span className="text-neutral-600">·</span>
+                                    <span className="text-xs text-neutral-400">{item.due}</span>
+                                  </>
+                                )}
+                              </div>
+                              {item.note && (
+                                <p className="text-xs text-violet-400 mt-2 flex items-center gap-1">
+                                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  {item.note}
+                                </p>
+                              )}
+                            </div>
+                            <StatusBadge status={item.status} score={item.score} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </GlassCard>
-              ))
-            )}
+              );
+            })}
           </div>
         )}
 
