@@ -844,23 +844,34 @@ const CourseTracker = () => {
           </div>
         )}
 
-        {/* Alerts */}
-        {selectedWeek === 3 && activeTab === 'schedule' && (
-          <GlassCard className="mt-6 p-4 border-emerald-500/20 bg-emerald-500/5" hover={false}>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+        {/* Submitted Items Alert */}
+        {activeTab === 'schedule' && (() => {
+          const submittedItems = weeklySchedule[selectedWeek]?.assignments.filter(a => a.status === 'submitted') || [];
+          if (submittedItems.length === 0) return null;
+
+          return (
+            <GlassCard className="mt-6 p-4 border-emerald-500/20 bg-emerald-500/5" hover={false}>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-emerald-400">Submitted · Awaiting Grade</p>
+                  <div className="mt-2 space-y-1">
+                    {submittedItems.map((item, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <span className="text-sm text-emerald-200/80">{item.name}</span>
+                        <span className="text-xs text-emerald-400/60">{item.course} · {item.pts} pts</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-emerald-400">Submitted</p>
-                <p className="text-sm text-emerald-200/80 mt-0.5">IT Strategic Plan Part 1 (140 pts)</p>
-                <p className="text-xs text-emerald-400/60 mt-1">IFSM 301 · Awaiting grade</p>
-              </div>
-            </div>
-          </GlassCard>
-        )}
+            </GlassCard>
+          );
+        })()}
 
         {[4, 5, 6].includes(selectedWeek) && activeTab === 'schedule' && (
           <GlassCard className="mt-6 p-4 border-rose-500/20 bg-rose-500/5" hover={false}>
