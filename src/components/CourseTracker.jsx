@@ -118,7 +118,7 @@ const CourseTracker = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [selectedWeek, setSelectedWeek] = useState(3);
+  const [selectedWeek, setSelectedWeek] = useState(5);
   const [activeTab, setActiveTab] = useState('schedule');
   const [expandedCourse, setExpandedCourse] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -126,7 +126,7 @@ const CourseTracker = () => {
   const [startedItems, setStartedItems] = useState({});
 
   // Current week for semester progress
-  const CURRENT_WEEK = 3;
+  const CURRENT_WEEK = 5;
   const TOTAL_WEEKS = 8;
   const semesterProgress = Math.round((CURRENT_WEEK / TOTAL_WEEKS) * 100);
 
@@ -353,14 +353,15 @@ const CourseTracker = () => {
     ]},
     3: { dates: 'Jan 21-27', assignments: [
       { course: 'IFSM 301', name: 'IT Strategic Plan Pt 1', pts: 140, status: 'submitted', due: 'Fri Jan 24' },
-      { course: 'IFSM 301', name: 'Week 3 Discussion (REPLY)', pts: 20, status: 'upcoming', due: 'Tue Jan 28' },
-      { course: 'IFSM 370', name: 'Project 1: Interview', pts: 140, status: 'upcoming', due: 'Mon Jan 27' },
+      { course: 'IFSM 301', name: 'Week 3 Discussion (REPLY)', pts: 20, status: 'graded', score: '20/20', due: 'Tue Jan 28' },
+      { course: 'IFSM 370', name: 'Project 1: Interview', pts: 140, status: 'submitted', due: 'Mon Jan 27' },
     ]},
     4: { dates: 'Jan 28 - Feb 3', assignments: [
-      { course: 'IFSM 304', name: 'Paper B', pts: 230, status: 'upcoming', due: 'Mon Feb 3' },
-      { course: 'IFSM 301', name: 'IT Strategic Plan Pt 2', pts: 200, status: 'upcoming', due: 'Mon Feb 3' },
-      { course: 'IFSM 370', name: 'Week 4 Discussion', pts: 40, status: 'upcoming', due: 'Post Fri, Reply Tue' },
-      { course: 'IFSM 301', name: 'Week 4 Discussion (REPLY)', pts: 20, status: 'upcoming' },
+      { course: 'IFSM 304', name: 'Paper B', pts: 230, status: 'submitted', due: 'Mon Feb 3' },
+      { course: 'IFSM 301', name: 'IT Strategic Plan Pt 2', pts: 200, status: 'submitted', due: 'Mon Feb 3' },
+      { course: 'IFSM 370', name: 'Week 4 Discussion', pts: 40, status: 'graded', score: '40/40', due: 'Post Fri, Reply Tue' },
+      { course: 'IFSM 301', name: 'Week 4 Discussion (REPLY)', pts: 20, status: 'graded', score: '20/20' },
+      { course: 'IFSM 304', name: 'Week 4 Discussion', pts: 20, status: 'graded', score: '20/20' },
     ]},
     5: { dates: 'Feb 4-10', assignments: [
       { course: 'IFSM 304', name: 'Paper C', pts: 230, status: 'upcoming', due: 'Mon Feb 10' },
@@ -427,7 +428,7 @@ const CourseTracker = () => {
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[10px] text-neutral-400 uppercase tracking-widest">Week 3 of 8</span>
+                <span className="text-[10px] text-neutral-400 uppercase tracking-widest">Week 5 of 8</span>
               </div>
               <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white via-white to-neutral-400 bg-clip-text text-transparent">
                 Course Tracker
@@ -467,7 +468,7 @@ const CourseTracker = () => {
         {/* Due Soon Alert */}
         {(() => {
           // Get all upcoming assignments from current week
-          const dueSoonItems = weeklySchedule[CURRENT_WEEK]?.assignments.filter(
+          const dueSoonItems = weeklySchedule[5]?.assignments.filter(
             a => a.status === 'upcoming' && !completedItems[`${a.course}-${a.name}`]
           ) || [];
 
@@ -527,7 +528,7 @@ const CourseTracker = () => {
           <p className="text-xs text-neutral-500 uppercase tracking-wider mb-3">Select Week</p>
           <div className="flex gap-2 lg:gap-3">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((week) => {
-              const isCurrent = week === 3;
+              const isCurrent = week === 5;
               const isHeavy = [4, 5, 6].includes(week);
               const isSelected = selectedWeek === week;
 
@@ -563,7 +564,7 @@ const CourseTracker = () => {
               <p className="text-sm font-medium">Week {selectedWeek}</p>
               <p className="text-xs text-neutral-500">{weeklySchedule[selectedWeek]?.dates}</p>
             </div>
-            {selectedWeek === 3 && (
+            {selectedWeek === 5 && (
               <span className="px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full border border-amber-500/30">
                 Current Week
               </span>
