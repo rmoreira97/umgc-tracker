@@ -126,7 +126,7 @@ const CourseTracker = () => {
   const [startedItems, setStartedItems] = useState({});
 
   // Current week for semester progress
-  const CURRENT_WEEK = 5;
+  const CURRENT_WEEK = 6;
   const TOTAL_WEEKS = 8;
   const semesterProgress = Math.round((CURRENT_WEEK / TOTAL_WEEKS) * 100);
 
@@ -483,7 +483,7 @@ const CourseTracker = () => {
         {/* Due Soon Alert */}
         {(() => {
           // Get all upcoming assignments from current week
-          const dueSoonItems = weeklySchedule[5]?.assignments.filter(
+          const dueSoonItems = weeklySchedule[6]?.assignments.filter(
             a => a.status === 'upcoming' && !completedItems[`${a.course}-${a.name}`]
           ) || [];
 
@@ -543,7 +543,7 @@ const CourseTracker = () => {
           <p className="text-xs text-neutral-500 uppercase tracking-wider mb-3">Select Week</p>
           <div className="flex gap-2 lg:gap-3">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((week) => {
-              const isCurrent = week === 5;
+              const isCurrent = week === 6;
               const isHeavy = [4, 5, 6].includes(week);
               const isSelected = selectedWeek === week;
 
