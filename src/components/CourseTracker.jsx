@@ -307,7 +307,7 @@ const CourseTracker = () => {
         { name: 'Week 4 Discussion', status: 'graded', score: 16, max: 20, note: 'Needed 3 replies, only did 2' },
         { name: 'Week 5 Discussion', status: 'submitted', max: 20 },
         { name: 'Paper C', status: 'submitted', max: 230, due: 'Feb 10' },
-        { name: 'Week 6 Discussion', status: 'upcoming', max: 20 },
+        { name: 'Week 6 Discussion', status: 'submitted', max: 20 },
         { name: 'Week 7 Discussion', status: 'upcoming', max: 20 },
         { name: 'Presentation D', status: 'upcoming', max: 140, due: 'Feb 24' },
         { name: 'Week 8 Discussion', status: 'upcoming', max: 20 },
@@ -322,7 +322,7 @@ const CourseTracker = () => {
         { name: 'Week 4 Discussion (REPLY)', status: 'graded', score: 20, max: 20 },
         { name: 'IT Strategic Plan Pt 2', status: 'submitted', max: 200, due: 'Feb 3' },
         { name: 'Week 5 Discussion (HOST)', status: 'submitted', max: 20 },
-        { name: 'Week 6 Discussion (REPLY)', status: 'upcoming', max: 20 },
+        { name: 'Week 6 Discussion (REPLY)', status: 'submitted', max: 20 },
         { name: 'CIO Organization Memo', status: 'upcoming', max: 250, due: 'Feb 17' },
         { name: 'Week 7 Discussion (REPLY)', status: 'upcoming', max: 20 },
         { name: 'Week 8 Discussion (REPLY)', status: 'upcoming', max: 20 },
@@ -342,7 +342,7 @@ const CourseTracker = () => {
         { name: 'Week 5 Discussion', status: 'submitted', max: 40 },
         { name: 'Project 2: VPN', status: 'submitted', max: 140, due: 'Feb 10' },
         { name: 'Week 7 Discussion', status: 'upcoming', max: 40 },
-        { name: 'Project 3: Case Study', status: 'upcoming', max: 160, due: 'Feb 17' },
+        { name: 'Project 3: Case Study', status: 'submitted', max: 160, due: 'Feb 17' },
         { name: 'Project 4: Final', status: 'upcoming', max: 200, due: 'Mar 3' },
       ]
     }
@@ -385,9 +385,10 @@ const CourseTracker = () => {
       { course: 'IFSM 304', name: 'Week 5 Discussion', pts: 20, status: 'submitted' },
     ]},
     6: { dates: 'Feb 11-17', assignments: [
+      { course: 'IFSM 304', name: 'Week 6 Discussion', pts: 20, status: 'submitted', note: 'Posted Feb 11' },
+      { course: 'IFSM 301', name: 'Week 6 Discussion (REPLY)', pts: 20, status: 'submitted', note: '3 replies posted Feb 13' },
+      { course: 'IFSM 370', name: 'Project 3: Case Study', pts: 160, status: 'submitted', due: 'Mon Feb 17', note: 'Submitted Feb 13' },
       { course: 'IFSM 301', name: 'CIO Organization Memo', pts: 250, status: 'upcoming', due: 'Mon Feb 17' },
-      { course: 'IFSM 370', name: 'Project 3: Case Study', pts: 160, status: 'upcoming', due: 'Mon Feb 17' },
-      { course: 'IFSM 301', name: 'Week 6 Discussion (REPLY)', pts: 20, status: 'upcoming' },
     ]},
     7: { dates: 'Feb 18-24', assignments: [
       { course: 'IFSM 304', name: 'Presentation D', pts: 140, status: 'upcoming', due: 'Mon Feb 24' },
