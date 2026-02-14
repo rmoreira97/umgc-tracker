@@ -48,7 +48,7 @@ const CircularProgress = ({ percentage, color, size = 80, strokeWidth = 6 }) => 
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-lg font-bold text-white">{percentage}%</span>
+        <span className={`font-bold text-white ${String(percentage).length > 4 ? 'text-xs' : String(percentage).length > 2 ? 'text-sm' : 'text-lg'}`}>{percentage}%</span>
       </div>
     </div>
   );
